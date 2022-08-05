@@ -1,0 +1,15 @@
+Org-clock has a feature where it can detect how long you had been idle and subtract that amount, in case you forgot to clock out of current task. On X11 systems it relies on the =xprintidle= program being on your path.
+
+A low hanging fruit usecase for Emacs [[https://www.gnu.org/software/emacs/manual/html_node/elisp/Dynamic-Modules.html][dynamic modules]] is to eliminate subprocess spawns and convert them into FFI call. As an experiment and learning exercise, here the =xprintidle= program was replaced by an interface to Rust function in dynamic module, which you can simply use in Elisp like a normal function.
+
+An excerpt to lazy load the module:
+
+#+begin_src elisp
+(let ((x11idle-module (expand-file-name "~/.emacs.d/modules/libxidle.so")))
+  (when (and (eq window-system 'x) (file-exists-p x11idle-module))
+    (eval-after-load 'org-clock
+      (lambda ()
+        (module-load x11idle-module)
+        (setf (symbol-function 'org-user-idle-seconds) #'x11idle-get)
+        (setq org-clock-idle-time 5)))))
+#+end_src
