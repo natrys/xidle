@@ -7,8 +7,12 @@ edition = "2021"
 
 [dependencies]
 anyhow = "*"
-x11 = { version = "2.19.*", features = ["xlib", "xss"] }
-emacs = "0.18.0"
+x11 = { version = "2.*.*", features = ["xlib", "xss"] }
+emacs = "0.19.0"
 
 [lib]
 crate-type = ["cdylib"]
+
+[profile.release]
+strip = true
+lto = true
